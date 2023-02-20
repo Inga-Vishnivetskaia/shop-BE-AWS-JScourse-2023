@@ -1,0 +1,6 @@
+# Standard
+package.json
+/.git
+/.vscode
+/.idea
+node_modules

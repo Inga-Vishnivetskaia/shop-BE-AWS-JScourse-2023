@@ -1,1 +1,1 @@
-# shop-react-BE-AWS-JScourse-2023
+# shop-BE-AWS-JScourse-2023
