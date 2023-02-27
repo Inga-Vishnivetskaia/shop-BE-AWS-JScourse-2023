@@ -1,4 +1,5 @@
 const mock = require("../mocks/products-mock");
+const { errorMessage } = require("./constants");
 
 const getProduct = (id) => {
   const product = mock.products.find((p) => p.productId === id);
@@ -11,7 +12,7 @@ module.exports.getProductById = async (event) => {
 
   if (!event.pathParameters) {
     statusCode = 404;
-    body = "Invalid url for product request";
+    body = errorMessage.invalidUrlResponse;
   } else {
     const { productId } = event.pathParameters;
     const product = getProduct(productId);
@@ -20,7 +21,7 @@ module.exports.getProductById = async (event) => {
 
     if (!product) {
       statusCode = 404;
-      body = "This product is not available at the moment";
+      body = errorMessage.invalidIdResponse;
     }
   }
 
