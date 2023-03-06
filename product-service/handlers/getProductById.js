@@ -1,9 +1,27 @@
-const mock = require("../mocks/products-mock");
-const { errorMessage } = require("./constants");
+/* eslint-disable import/extensions */
+/* eslint-disable camelcase */
+const { GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { ddbDocClient } = require("../libs/ddbDocClient.js");
+const { errorMessage, params_products } = require("./constants.js");
 
-const getProduct = (id) => {
-  const product = mock.products.find((p) => p.productId === id);
-  return product;
+const isValid = (product) => {
+  return product?.title && product?.id;
+};
+
+const getProduct = async (id) => {
+  const params = {
+    ...params_products,
+    Key: {
+      id,
+    },
+  };
+  try {
+    const data = await ddbDocClient.send(new GetCommand(params));
+    console.log("Success :", data.Item);
+    return data.Item;
+  } catch (error) {
+    console.log("Error", error);
+  }
 };
 
 module.exports.getProductById = async (event) => {
@@ -15,11 +33,11 @@ module.exports.getProductById = async (event) => {
     body = errorMessage.invalidUrlResponse;
   } else {
     const { productId } = event.pathParameters;
-    const product = getProduct(productId);
+    const product = await getProduct(productId);
     body = product;
     statusCode = 200;
 
-    if (!product) {
+    if (!isValid(product)) {
       statusCode = 404;
       body = errorMessage.invalidIdResponse;
     }
@@ -32,7 +50,4 @@ module.exports.getProductById = async (event) => {
     },
     body: JSON.stringify(body),
   };
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
 };
