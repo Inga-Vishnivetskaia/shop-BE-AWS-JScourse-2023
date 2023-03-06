@@ -1,16 +1,18 @@
-const { ddbDocClient } = require("../libs/ddbDocClient.js");
+/* eslint-disable import/extensions */
+/* eslint-disable camelcase */
 const { GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { ddbDocClient } = require("../libs/ddbDocClient.js");
 const { errorMessage, params_products } = require("./constants.js");
 
 const isValid = (product) => {
   return product?.title && product?.id;
-}
+};
 
 const getProduct = async (id) => {
   const params = {
     ...params_products,
-    Key:  {
-      id
+    Key: {
+      id,
     },
   };
   try {
@@ -22,7 +24,7 @@ const getProduct = async (id) => {
   }
 };
 
-module.exports.getProductById = async (event = e) => {
+module.exports.getProductById = async (event) => {
   let body;
   let statusCode;
 

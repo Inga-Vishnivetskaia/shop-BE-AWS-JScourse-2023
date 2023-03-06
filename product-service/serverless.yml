@@ -42,6 +42,7 @@ provider:
 functions:
   getProductsList:
     handler: handlers/getProductsList.getProductsList
+    timeout: 15
     description: gets all products from joined Dynamo DB tables (products, stocks)
     events:
       - http:
@@ -50,6 +51,7 @@ functions:
           cors: true
   getProductById:
     handler: handlers/getProductById.getProductById
+    timeout: 15
     events:
       - http:
           path: products/{productId}

@@ -1,20 +1,22 @@
+/* eslint-disable camelcase */
+/* eslint-disable import/extensions */
 // Task 4
 const { ScanCommand } = require("@aws-sdk/lib-dynamodb");
-const { ddbDocClient } =require("../libs/ddbDocClient.js");
-const { params_products, params_stocks } = require( "./constants.js");
+const { ddbDocClient } = require("../libs/ddbDocClient.js");
+const { params_products, params_stocks } = require("./constants.js");
 
 const mergeProductsAndStocksById = (products, stocks) => {
   const merged = products.map((product) => {
-     const relevant = stocks.find( p => p.product_id === product.id);
-     if (relevant) {
+    const relevant = stocks.find((p) => p.product_id === product.id);
+    if (relevant) {
       return {
         ...product,
         count: relevant.count,
-      }
+      };
     }
-      return product;
-     });
-     return merged;
+    return product;
+  });
+  return merged;
 };
 
 module.exports.getProductsList = async () => {
@@ -24,19 +26,21 @@ module.exports.getProductsList = async () => {
     const joined = mergeProductsAndStocksById(products.Items, stocks.Items);
 
     console.log("Lambda getProductsList function is invoked");
-  
+
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
       body: JSON.stringify(joined),
     };
   } catch (error) {
-      return {
-        statusCode: 500,
-        body: error.message,
-      }
+    return {
+      statusCode: 500,
+      body: error.message,
+    };
   }
 };
-
 
 // Task 3
 // import { mock } from "../mocks/products-mock";
