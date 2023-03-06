@@ -16,6 +16,12 @@ module.exports = {
     "arrow-body-style": "off",
     "prefer-arrow-callback": "off",
     "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        devDependencies: true,
+      },
+    ],
     "max-len": [
       "warn",
       {
