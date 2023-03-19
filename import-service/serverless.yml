@@ -1,11 +1,6 @@
-service: product-service
-# app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
+service: import-service
 
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-frameworkVersion: "3"
+frameworkVersion: '3'
 
 provider:
   name: aws
@@ -13,23 +8,41 @@ provider:
   stage: dev
   region: eu-west-1
   environment:
-    DYNAMODB_TABLE_PRODUCTS: "products-AWS-JS-course"
-    DYNAMODB_TABLE_STOCKS: "stocks-AWS-JS-course"
+    S3_BUCKET: "import-service-aws-js-course"
   iam:
     role:
       statements:
         - Effect: Allow
-          Action:
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-            - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
-          Resource: [
-             "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_PRODUCTS}",
-             "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_STOCKS}",
-          ]
+          Action: "s3:ListBucket"
+          Resource:
+            - "arn:aws:s3:::${self:provider.environment.S3_BUCKET}"
+        - Effect: Allow
+          Action: "s3:*"
+          Resource:
+            - "arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*"
+
+functions:
+  importProductsFile:
+    handler: handlers/importProductsFile.importProductsFile
+    events:
+      - http:
+          method: get
+          path: /import
+          cors: true
+          request:
+            parameters:
+              querystrings:
+                name: true
+  importFileParser:
+    handler: handlers/importFileParser.importFileParser
+    events:
+      - s3:
+          bucket: ${self:provider.environment.S3_BUCKET}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+            - suffix: .csv
+          existing: true
 
 # you can add packaging information here
 #package:
@@ -39,32 +52,9 @@ provider:
 #    - include-me.js
 #    - include-me-dir/**
 
-functions:
-  getProductsList:
-    handler: handlers/getProductsList.getProductsList
-    timeout: 15
-    description: gets all products from joined Dynamo DB tables (products, stocks)
-    events:
-      - http:
-          path: products
-          method: get
-          cors: true
-  getProductById:
-    handler: handlers/getProductById.getProductById
-    timeout: 15
-    events:
-      - http:
-          path: products/{productId}
-          method: get
-          cors: true
-  createProduct:
-    handler: handlers/createProduct.createProduct
-    events:
-      - http:
-          path: products
-          method: post
-          cors: true
-
+# functions:
+#   hello:
+#     handler: handler.hello
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
