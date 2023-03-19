@@ -1,0 +1,15 @@
+{
+  "name": "import-service",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1333.0",
+    "csv-parser": "^3.0.0"
+  }
+}
