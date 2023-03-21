@@ -6,19 +6,19 @@ const { ddbDocClient } = require("../libs/ddbDocClient");
 module.exports.createProduct = async (event) => {
   console.log("Event is provided for createProduct", event);
 
-  const product =
-    typeof event.body === "string" ? JSON.parse(event.body) : event.body;
+  // const product =
+  //   typeof event.body === "string" ? JSON.parse(event.body) : event.body;
 
-  console.log("parsed body", product);
+  // console.log("parsed body", product);
 
-  if (!event.body) {
+  if (!event) {
     return {
       statusCode: 400,
       body: "Please provide payload for post request",
     };
   }
 
-  const { title, description, price } = product;
+  const { title, description, price } = event;
 
   if (!title || !description || !price) {
     return {
@@ -50,13 +50,10 @@ module.exports.createProduct = async (event) => {
     },
   };
 
-  try {
-    const productsData = await ddbDocClient.send(
-      new PutCommand(params_products)
-    );
-    const stocksData = await ddbDocClient.send(new PutCommand(params_stocks));
-    console.log("Success - item added or updated", productsData, stocksData);
-  } catch (error) {
-    console.log("Error", error);
-  }
+  console.log("params", params_products, params_stocks);
+
+  return Promise.all([
+    ddbDocClient.send(new PutCommand(params_products)),
+    ddbDocClient.send(new PutCommand(params_stocks)),
+  ]);
 };
