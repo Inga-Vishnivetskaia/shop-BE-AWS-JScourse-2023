@@ -1,0 +1,24 @@
+service: authorization-service
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: eu-west-1
+
+plugins:
+  - serverless-dotenv-plugin
+
+functions:
+  basicAuthorizer:
+    handler: basicAuthorizer.basicAuthorizer
+
+#    Define function environment variables here
+#    environment:
+#      variable2: value2
+
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"
