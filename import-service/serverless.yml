@@ -44,7 +44,14 @@ functions:
           request:
             parameters:
               querystrings:
-                name: true
+                name: true          	
+          authorizer:
+            arn: arn:aws:lambda:eu-west-1:770955452549:function:authorization-service-dev-basicAuthorizer
+            # no caching:
+            resultTtlInSeconds: 0
+            # identitySource: method.request.header.Authorization
+            # identityValidationExpression: someRegex
+            type: token
   importFileParser:
     handler: handlers/importFileParser.importFileParser
     events:
